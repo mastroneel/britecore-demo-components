@@ -30,27 +30,28 @@ $selected-nav-background: #29606a;
 
 #Nav {
   background-color: $nav-background;
-  height: 60px;
-  line-height: 60px;
+  height: 50px;
+  line-height: 50px;
   img {
-    width: 150px;
+    width: 120px;
     margin: 0 0 -5px 20px;
   }
   a {
     text-decoration: none;
     .fa-caret-down {
       margin-left: 20px;
-      font-size: 1.2em;
+      font-size: 1em;
     }
   }
   ul {
     list-style-type: none;
     display: inline-flex;
     padding: 0;
-    margin: 0 0 0 100px;
+    margin: 0 0 0 50px;
     li {
-      margin: 0 15px;
+      margin: 0 10px;
       a {
+        font-size: 0.9em;
         i {
           margin-right: 5px;
         }

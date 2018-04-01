@@ -1,123 +1,154 @@
 <template>
  <div id="NewInput">
    <div class="outer-frame">
-
      <h1>Commercial Property - Add Field</h1>
+     <div class="inner">
+       <!-- container for field types section -->
+       <div class="field-types-container">
+         <div class="field-types-inner">
+           <h2 class="field-types">Field Types</h2>
+           <h4>Filter Types</h4>
+           <!-- searchbar -->
+           <input v-model="searchText">
+
+           <!-- list of types -->
+            <div v-if="types">
+              <ul>
+                <li v-for="type in typeSearched" @click="selectType(type)" :class="{selected:type.type == selectedType}">
+                  <h2>
+                  <i v-if="type.type == 'Text'" class="fa fa-font"></i>
+                  <i v-if="type.type == 'Date'" class="fa fa-calendar"></i>
+                  <i v-if="type.type == 'VIN'" class="fa fa-car"></i>
+                  <i v-if="type.type == 'Number'" class="fa fa-hashtag"></i>
+                  <i v-if="type.type == 'Currency'" class="fa fa-usd"></i>
+                  <i v-if="type.type == 'Select'" class="fa fa-check-circle"></i>
+                    {{ type.type }}
+                  </h2>
+                  <br>
+                  <p>Definition</p>
+                  <h3>{{ type.definition }}</h3>
+                  <br>
+                  <p>Default Display</p>
+                  <h3>{{ type.defaultDisplay }}</h3>
+                </li>
+              </ul>
+            </div>
+          </div>
+       </div>
+       <!-- container for inputs -->
+       <div class="inputs-container">
+         <!-- before the user selects a type, this div is displayed -->
+         <div class="placeholder-text" v-if="!newField.type">
+           <p>First, please select a type.</p>
+         </div>
+
+         <!-- inputs displayed only once type is selected -->
+         <div v-if="newField.type">
+
+           <!-- {{ newField }} -->
+           <h2>Field Details</h2>
+
+           <div class="left-input">
+             <h4>Display Label</h4>
+             <input type="text" v-model="newField.displayLabel" @blur="generateRefName()">
+             <p>For display purposes, spaces allowed</p>
+             <h4 class="margin">Default Value</h4>
+             <input type="text" v-model="newField.defaultValue">
+             <h4 class="margin">Custom Validation</h4>
+             <input type="text" v-model="newField.pattern" @blur="checkRegex()">
+             <p>Any regex pattern can be used for custom input validation</p>
+           </div>
+           <div class="right-input">
+             <h4>Reference Name</h4>
+             <input type="text" v-model="newField.referenceName" @blur="removeSpaces()">
+             <p>Used to reference in calculations, no spaces allowed</p>
+           </div>
+
+
+        <div class="tags-container">
+           <h3>Tags</h3>
+           <h4>Tag Groups</h4>
+             <!-- tags, conditionally rendered by input type -->
+             <div v-if="newField.type == 'Date'">
+               <button v-for="(tags, group) in dateTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+             </div>
+
+             <div v-if="newField.type == 'Number'">
+               <button v-for="(tags, group) in numberTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+             </div>
+
+             <div v-if="newField.type == 'Currency'">
+               <button v-for="(tags, group) in currencyTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+             </div>
+
+             <div v-if="newField.type == 'Text'">
+               <button v-for="(tags, group) in textTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+             </div>
+
+             <div v-if="newField.type == 'Select'">
+               <button v-for="(tags, group) in selectTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+             </div>
+
+             <div v-if="newField.type == 'VIN'">
+               <button v-for="(tags, group) in vinTagGroups" @click="toggleTagsInGroup(tags, group)" :class="{ active: isActive }">{{ group }}</button>
+               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+             </div>
+             <!-- end of tags -->
+            </div>
+
+
+
+
+
+
+         <p>Field Groups</p>
+
+           <!-- field groups -->
+           <ul>
+             <li v-for="group in fieldGroups" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
+           </ul>
+
+           <input type="text" v-if="showNewFieldGroup" v-model="newFieldGroup.title">
+
+           <br>
+
+           <button v-if="!showNewFieldGroup" @click="showNewFieldGroupInput()">Add a New Group</button>
+
+           <div v-if="showNewFieldGroup">
+             <button @click="saveNewFieldGroup">Save New Group</button>
+             <button @click="cancelNewFieldGroup()">Cancel</button>
+           </div>
+
+
+         </div>
+       </div>
+
 
      <!-- saved fields -->
-     <p class="red">Saved Fields</p>
+     <!-- <p class="red">Saved Fields</p>
      {{ savedFields }}
 
      <br>
-     <br>
-     <br>
-     <br>
-     <br>
+     <br> -->
 
      <!-- new field, yet to be saved -->
-     <p>Unsaved Fields</p>
+     <!-- <p>Unsaved Fields</p>
      {{ newField }}
      <br>
-     <br>
+     <br> -->
 
      <!-- first, the user must select a type -->
 
      <!-- input to search input types -->
-     <p>Search Bar and Types</p>
-     <input v-model="searchText">
-
-      <div v-if="types">
-        <ul>
-          <li v-for="type in typeSearched" @click="selectType(type)">{{ type }} </li>
-        </ul>
-      </div>
-
-
-     <p>New Input Inputs</p>
-     <!-- inputs displayed only once type is selected -->
-     <div v-if="newField.type">
-       <label for="displayLabel">Display Label</label>
-       <br>
-       <input type="text" id="displayLabel" v-model="newField.displayLabel" @blur="generateRefName()">
-       <br>
-       <label for="defaultValue">Default Value</label>
-       <br>
-       <input type="text" id="defaultValue" v-model="newField.defaultValue">
-       <br>
-       <label for="pattern">Custom Validation</label>
-       <br>
-       <input type="text" id="pattern" v-model="newField.pattern" @blur="checkRegex()">
-       <br>
-       <label for="referenceName">Reference Name</label>
-       <br>
-       <input type="text" id="referenceName" v-model="newField.referenceName" @blur="removeSpaces()">
-
-     <p>Tags</p>
-       <!-- tags, conditionally rendered by input type -->
-       <div v-if="newField.type == 'date'">
-         <button v-for="(tags, group) in dateTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-         <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
-       </div>
-
-       <div v-if="newField.type == 'number'">
-         <button v-for="(tags, group) in numberTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-         <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
-       </div>
-
-       <div v-if="newField.type == 'currency'">
-         <button v-for="(tags, group) in currencyTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-         <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
-       </div>
-
-       <div v-if="newField.type == 'text'">
-         <button v-for="(tags, group) in textTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-         <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
-       </div>
-
-       <div v-if="newField.type == 'select'">
-         <button v-for="(tags, group) in selectTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-         <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
-       </div>
-
-       <div v-if="newField.type == 'vin'">
-         <button v-for="(tags, group) in vinTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-         <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
-       </div>
-       <!-- end of tags -->
-
-
-       <div v-if="newField.type">
-         <!-- delete, save, or cancel changes -->
-         <button @click="deleteNew">Delete</button>
-
-         <button @click="cancelChanges">Cancel Changes</button>
-
-         <button @click="saveNew">Save</button>
-       </div>
 
 
 
 
-     <p>Field Groups</p>
-
-       <!-- field groups -->
-       <ul>
-         <li v-for="group in fieldGroups" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
-       </ul>
-
-       <input type="text" v-if="showNewFieldGroup" v-model="newFieldGroup.title">
-
-       <br>
-
-       <button v-if="!showNewFieldGroup" @click="showNewFieldGroupInput()">Add a New Group</button>
-
-       <div v-if="showNewFieldGroup">
-         <button @click="saveNewFieldGroup">Save New Group</button>
-         <button @click="cancelNewFieldGroup()">Cancel</button>
-       </div>
-
-
-     </div>
 
 
 
@@ -126,36 +157,34 @@
      <br>
 
 
-     <p>Field Groups:</p>
+     <!-- <p>Field Groups:</p> -->
      <!-- field groups -->
-     {{ fieldGroups }}
+     <!-- {{ fieldGroups }} -->
 
      <br>
      <br>
      <br>
 
-     <p>New Field Group</p>
-     {{ newFieldGroup }}
+     <!-- <p>New Field Group</p> -->
+     <!-- {{ newFieldGroup }} -->
 
 
 
+   </div>
 
+   <!-- save, cancel, delete buttons in the outer container -->
+   <div v-if="newField.type" class="button-container">
+     <button class="save-button" @click="saveNew">Save Changes</button>
 
-     <br>
-     <br>
-     <br>
-     <br>
-     <br>
+     <button class="delete-button" @click="deleteNew">Delete Input</button>
 
+     <button class="cancel-button" @click="cancelChanges">Cancel Changes</button>
 
    </div>
 
 
 
-
-
-
-
+   </div>
  </div>
 </template>
 
@@ -167,16 +196,52 @@ export default {
   data () {
     return {
       // different input types
+      // types: [
+      //   'date',
+      //   'number',
+      //   'currency',
+      //   'text',
+      //   'select',
+      //   'vin'
+      // ],
       types: [
-        'date',
-        'number',
-        'currency',
-        'text',
-        'select',
-        'vin'
+        {
+          type: 'Text',
+          definition: 'String of text',
+          defaultDisplay: 'Free form text input'
+        },
+        {
+          type: 'Date',
+          definition: 'Standard ISO format date',
+          defaultDisplay: 'Datepicker, with configurable format'
+        },
+        {
+          type: 'VIN',
+          definition: 'Vehicle Identification Number',
+          defaultDisplay: 'Free form text input'
+        },
+        {
+          type: 'Number',
+          definition: 'Number',
+          defaultDisplay: 'Number input'
+        },
+        {
+          type: 'Currency',
+          definition: 'Currency',
+          defaultDisplay: 'Currency input'
+        },
+        {
+          type: 'Select',
+          definition: 'Select',
+          defaultDisplay: 'Select menu'
+        }
       ],
+      selectedType: undefined,
       // Empty search input
       searchText: '',
+      // Tag is selected?
+
+
       // example tag groups for each input type
       dateTagGroups: {
         dateTag1: [
@@ -298,7 +363,7 @@ export default {
       // When the user selects a type, the value for 'type' is set to the selected type
       selectType (type) {
         this.newField = {
-          type: type,
+          type: type.type,
           displayLabel: null,
           defaultValue: null,
           pattern: null,
@@ -306,6 +371,7 @@ export default {
           tags: {},
           fieldGroups: {}
         }
+        this.selectedType = type.type;
       },
       // Generates reference name on blur from display label input by removing spaces
       generateRefName () {
@@ -444,7 +510,7 @@ export default {
           return this.types;
         }
         return this.types.filter(function(type){
-          return type.indexOf(self.searchText) >= 0;
+          return type.type.toLowerCase().indexOf(self.searchText.toLowerCase()) >= 0;
         });
       }
     },
@@ -454,20 +520,201 @@ export default {
 <style lang="scss">
 
   // Variables
+  $secondary-font-color: #41676c;
   $outer-frame-background: #f9fbfb;
   $selected-type-background: #367f95;
   $field-type-background: #eef5f5;
   $tag-background: #eef5f5;
-  $tag-borders: #d0e1e3;
+  $tag-border-color: #d0e1e3;
   $save-button-background: #3d8da6;
-  $input-borders: #bcd1d3;
+  $input-border-color: #bcd1d3;
   $field-groups-background: #f9fbfb;
   $delete-button-background: #b72f26;
+  $white: #fff;
+  $li-border-color: #d8e6e7;
+  $icon-color: #1d4a53;
+  $selected-type-text: #f7fbfc;
+  $selected-type-icon: #b3dbe1;
 
   #NewInput {
+    // Outer frame styles
     .outer-frame {
       background: $outer-frame-background;
-      padding: 40px 60px;
+      padding: 20px 40px;
+      h1 {
+        font-size: 30px;
+        margin-bottom: 20px;
+      }
+
+      // save, cancel, delete button styles
+      .button-container {
+        margin: 20px 0;
+        padding-bottom: 40px;
+        button {
+          height: 35px;
+          padding: 0 25px;
+          border-radius: 3px;
+          font-family: 'Proxima Nova', sans-serif;
+          font-weight: bold;
+          font-size: 13px;
+        }
+        .save-button {
+          background: $save-button-background;
+          border: 2px solid $save-button-background;
+          color: $white;
+          float: left;
+        }
+        .cancel-button, .delete-button {
+          float: right;
+        }
+        .cancel-button {
+          margin-right: 30px;
+          border: 2px solid $li-border-color;
+        }
+        .delete-button {
+          border: 2px solid $delete-button-background;
+          background: $delete-button-background;
+          color: $white;
+        }
+      }
+
+      // Inner container styles
+      .inner {
+        border: 2px solid $input-border-color;
+        border-radius: 5px;
+        background: $white;
+        height: 75vh;
+        input {
+          border: 2px solid $input-border-color;
+          border-radius: 5px;
+          height: 30px;
+        }
+
+        // field types styles
+        .field-types-container {
+          width: 20%;
+          background-color: $field-type-background;
+          float: left;
+          height: 75vh;
+          overflow-y: scroll;
+          .field-types-inner {
+            padding: 20px 25px 20px 20px;
+          }
+          .field-types {
+            margin-bottom: 10px;
+            font-size: 20px;
+          }
+          h4 {
+            margin-bottom: 10px;
+            font-size: 14px;
+          }
+          input {
+            width: 100%;
+          }
+          ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            li {
+              background: $white;
+              margin: 12px 0;
+              padding: 15px;
+              border: 2px solid $li-border-color;
+              border-radius: 5px;
+              line-height: 0.9;
+              i {
+                color: $icon-color;
+                margin-right: 3px;
+              }
+              h2 {
+                font-size: 16px;
+              }
+              h3 {
+                font-size: 14px;
+              }
+              p {
+                font-size: 12px;
+              }
+            }
+            li.selected {
+              background: $selected-type-background;
+              border-color: $selected-type-background;
+              h2, h3, {
+                color: $selected-type-text;
+              }
+              p, i {
+                color: $selected-type-icon;
+              }
+            }
+          }
+        }
+        // edit inputs container styles
+        .inputs-container {
+          width: 50%;
+          padding: 2%;
+          float: left;
+          // please select a type text
+          input {
+            width: 90%;
+          }
+          .left-input {
+            width: 50%;
+            float: left;
+          }
+          .right-input {
+            width: 50%;
+            float: right;
+          }
+          .placeholder-text {
+            p {
+              text-align: center;
+              font-size: 18px;
+              margin-top: 20%;
+            }
+          }
+          h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+          }
+          h4 {
+            font-size: 14px;
+            margin: 5px 0 5px 0;
+          }
+          .margin {
+            margin-top: 40px;
+          }
+          p {
+            font-size: 12px;
+            margin-top: 5px;
+          }
+        }
+        .tags-container {
+          float: left;
+          width: 100%;
+          h3 {
+            margin: 20px 0 15px 0;
+          }
+          button {
+            background: $tag-background;
+            color: $secondary-font-color;
+            border: 2px solid $tag-border-color;
+            border-radius: 5px;
+            font-family: 'Proxima Nova', sans-serif;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 10px 15px;
+            margin: 0 5px;
+            &:focus {
+              outline: none;
+            }
+          }
+          button.active {
+            color: $white;
+            background-color: $selected-type-background;
+            border-color: $selected-type-background;
+          }
+        }
+      }
     }
   }
 

@@ -51,7 +51,7 @@ body {
   h2, h3 {
     font-weight: bold;
   }
-  h1, h2, h3 {
+  h1, h2, h3, h4 {
     color: $main-font-color;
     margin: 0;
     padding: 0;
