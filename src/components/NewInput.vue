@@ -3,173 +3,159 @@
    <div class="outer-frame">
      <h1>Commercial Property - Add Field</h1>
      <div class="inner">
-       <!-- container for field types section -->
-       <div class="field-types-container">
-         <div class="field-types-inner">
-           <h2 class="field-types">Field Types</h2>
-           <h4>Filter Types</h4>
-           <!-- searchbar -->
-           <input v-model="searchText">
 
-           <!-- list of types -->
-            <div v-if="types">
-              <ul>
-                <li v-for="type in typeSearched" @click="selectType(type)" :class="{selected:type.type == selectedType}">
-                  <h2>
-                  <i v-if="type.type == 'Text'" class="fa fa-font"></i>
-                  <i v-if="type.type == 'Date'" class="fa fa-calendar"></i>
-                  <i v-if="type.type == 'VIN'" class="fa fa-car"></i>
-                  <i v-if="type.type == 'Number'" class="fa fa-hashtag"></i>
-                  <i v-if="type.type == 'Currency'" class="fa fa-usd"></i>
-                  <i v-if="type.type == 'Select'" class="fa fa-check-circle"></i>
-                    {{ type.type }}
-                  </h2>
-                  <br>
-                  <p>Definition</p>
-                  <h3>{{ type.definition }}</h3>
-                  <br>
-                  <p>Default Display</p>
-                  <h3>{{ type.defaultDisplay }}</h3>
-                </li>
-              </ul>
-            </div>
-          </div>
+       <div class="row">
+         <div class="col-xs-12 col-sm-4 col-md-3">
+           <!-- container for field types section -->
+           <div class="field-types-container">
+             <div class="field-types-inner">
+               <h2 class="field-types">Field Types</h2>
+               <h4>Filter Types</h4>
+               <!-- searchbar -->
+               <input v-model="searchText">
+
+               <!-- list of types -->
+                <div v-if="types">
+                  <ul>
+                    <li v-for="type in typeSearched" @click="selectType(type)" :class="{selected:type.type == selectedType}">
+                      <h2>
+                      <i v-if="type.type == 'Text'" class="fa fa-font"></i>
+                      <i v-if="type.type == 'Date'" class="fa fa-calendar"></i>
+                      <i v-if="type.type == 'VIN'" class="fa fa-car"></i>
+                      <i v-if="type.type == 'Number'" class="fa fa-hashtag"></i>
+                      <i v-if="type.type == 'Currency'" class="fa fa-usd"></i>
+                      <i v-if="type.type == 'Select'" class="fa fa-check-circle"></i>
+                        {{ type.type }}
+                      </h2>
+                      <br>
+                      <p>Definition</p>
+                      <h3>{{ type.definition }}</h3>
+                      <br>
+                      <p>Default Display</p>
+                      <h3>{{ type.defaultDisplay }}</h3>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+           </div>
+         </div>
+         <!-- before the user selects a type, this div is displayed -->
+         <div class="placeholder-text col-xs-12 col-sm-8 col-md-9" v-if="!newField.type">
+           <p>First, please select a type.</p>
+         </div>
+         <!-- inputs displayed only once type is selected -->
+           <div class="col-xs-12 col-sm-8 col-md-6 inputs-container" v-if="newField.type">
+             <h2>Field Details</h2>
+             <div class="row">
+               <div class="col-xs-12 col-sm-6">
+                 <h4>Display Label</h4>
+                 <input type="text" v-model="newField.displayLabel" @blur="generateRefName()">
+                 <p>For display purposes, spaces allowed</p>
+                 <h4 class="margin">Default Value</h4>
+                 <input type="text" v-model="newField.defaultValue">
+                 <h4 class="margin">Custom Validation</h4>
+                 <input type="text" v-model="newField.pattern" @blur="checkRegex()">
+                 <p>Any regex pattern can be used for custom input validation</p>
+               </div>
+               <div class="col-xs-12 col-sm-6">
+                 <h4>Reference Name</h4>
+                 <input type="text" v-model="newField.referenceName" @blur="removeSpaces()">
+                 <p>Used to reference in calculations, no spaces allowed</p>
+               </div>
+             </div>
+             <div class="row">
+               <div class="col-xs-12">
+                 <h3>Tags</h3>
+               </div>
+             </div>
+             <div class="row tag-row">
+               <!-- tag groups -->
+               <div class="col-xs-12 col-sm-6">
+                 <h4>Tag Groups</h4>
+                 <button v-if="newField.type == 'Date'" v-for="(tags, group) in dateTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+                 <button v-if="newField.type == 'Number'" v-for="(tags, group) in numberTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+                 <button v-if="newField.type == 'Currency'" v-for="(tags, group) in currencyTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+                 <button v-if="newField.type == 'Text'" v-for="(tags, group) in textTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+                 <button v-if="newField.type == 'Select'" v-for="(tags, group) in selectTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+                 <button v-if="newField.type == 'VIN'" v-for="(tags, group) in vinTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <!-- tags from tag groups -->
+               <div class="col-xs-12 col-sm-6">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
+             </div>
+           </div>
+           <!-- field groups -->
+           <div class="col-xs-12 col-sm-4 col-md-3" v-if="newField.type">
+             <div class="field-groups">
+               <h3>Field Groups</h3>
+               <p>Choose a group for this input</p>
+
+               <!-- field groups -->
+               <ul>
+                 <li v-for="group in fieldGroups" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
+               </ul>
+
+               <input type="text" v-if="showNewFieldGroup" v-model="newFieldGroup.title" placeholder="Enter name of new field group...">
+
+               <button class="add-field-group" v-if="!showNewFieldGroup" @click="showNewFieldGroupInput()">Add a New Group</button>
+
+               <div v-if="showNewFieldGroup" class="save-cancel-container">
+                 <button @click="saveNewFieldGroup">Save New Group</button>
+                 <button @click="cancelNewFieldGroup()">Cancel</button>
+               </div>
+             </div>
+           </div>
+
        </div>
-       <div class="placeholder-text" v-if="!newField.type">
-         <p>First, please select a type.</p>
-       </div>
+       <!-- end row -->
+
+
+
        <!-- container for inputs -->
        <div class="inputs-container">
-         <!-- before the user selects a type, this div is displayed -->
 
-         <!-- inputs displayed only once type is selected -->
+
+
          <div v-if="newField.type">
 
            <!-- {{ newField }} -->
-           <h2>Field Details</h2>
 
-           <div class="left-input">
-             <h4>Display Label</h4>
-             <input type="text" v-model="newField.displayLabel" @blur="generateRefName()">
-             <p>For display purposes, spaces allowed</p>
-             <h4 class="margin">Default Value</h4>
-             <input type="text" v-model="newField.defaultValue">
-             <h4 class="margin">Custom Validation</h4>
-             <input type="text" v-model="newField.pattern" @blur="checkRegex()">
-             <p>Any regex pattern can be used for custom input validation</p>
-           </div>
-           <div class="right-input">
-             <h4>Reference Name</h4>
-             <input type="text" v-model="newField.referenceName" @blur="removeSpaces()">
-             <p>Used to reference in calculations, no spaces allowed</p>
+
+           <div class="col">
+
            </div>
 
+           <div class="col">
 
-        <div class="tags-container">
-           <h3>Tags</h3>
-             <!-- tags, conditionally rendered by input type -->
-             <div v-if="newField.type == 'Date'">
-               <div class="tag-left">
-                  <h4>Tag Groups</h4>
-                  <button v-for="(tags, group) in dateTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               </div>
-               <div class="tag-right">
-                 <h4>Tags</h4>
-                 <ul>
-                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
-                 </ul>
-               </div>
-             </div>
-
-             <div v-if="newField.type == 'Number'">
-               <div class="tag-left">
-                  <h4>Tag Groups</h4>
-                  <button v-for="(tags, group) in numberTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               </div>
-               <div class="tag-right">
-                 <h4>Tags</h4>
-                 <ul>
-                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
-                 </ul>
-               </div>
-             </div>
-
-             <div v-if="newField.type == 'Currency'">
-               <div class="tag-left">
-                  <h4>Tag Groups</h4>
-                  <button v-for="(tags, group) in currencyTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               </div>
-               <div class="tag-right">
-                 <h4>Tags</h4>
-                 <ul>
-                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
-                 </ul>
-               </div>
-             </div>
-
-             <div v-if="newField.type == 'Text'">
-               <div class="tag-left">
-                  <h4>Tag Groups</h4>
-                  <button v-for="(tags, group) in textTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               </div>
-               <div class="tag-right">
-                 <h4>Tags</h4>
-                 <ul>
-                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
-                 </ul>
-               </div>
-             </div>
-
-             <div v-if="newField.type == 'Select'">
-               <div class="tag-left">
-                  <h4>Tag Groups</h4>
-                  <button v-for="(tags, group) in selectTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               </div>
-               <div class="tag-right">
-                 <h4>Tags</h4>
-                 <ul>
-                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
-                 </ul>
-               </div>
-             </div>
-
-             <div v-if="newField.type == 'VIN'">
-               <div class="tag-left">
-                  <h4>Tag Groups</h4>
-                  <button v-for="(tags, group) in vinTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               </div>
-               <div class="tag-right">
-                 <h4>Tags</h4>
-                 <ul>
-                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
-                 </ul>
-               </div>
-             </div>
-             <!-- end of tags -->
-            </div>
-
-
-
-
-
-
-         <p>Field Groups</p>
-
-           <!-- field groups -->
-           <ul>
-             <li v-for="group in fieldGroups" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
-           </ul>
-
-           <input type="text" v-if="showNewFieldGroup" v-model="newFieldGroup.title">
-
-           <br>
-
-           <button v-if="!showNewFieldGroup" @click="showNewFieldGroupInput()">Add a New Group</button>
-
-           <div v-if="showNewFieldGroup">
-             <button @click="saveNewFieldGroup">Save New Group</button>
-             <button @click="cancelNewFieldGroup()">Cancel</button>
            </div>
+
+             <!-- field groups -->
+             <div class="field-groups-container col">
+
+             </div>
+
+
+           <!-- tags, conditionally rendered by input type -->
+           <div class="tags-container">
+
+                <!-- end of tags -->
+               </div>
+
+
+
+
+
+
+
+
+
+
+
+
 
 
          </div>
@@ -573,6 +559,7 @@ export default {
 <style lang="scss">
 
   // Variables
+  $main-font-color: #3d3d3d;
   $secondary-font-color: #41676c;
   $outer-frame-background: #f9fbfb;
   $selected-type-background: #367f95;
@@ -643,10 +630,8 @@ export default {
           border-radius: 5px;
           height: 30px;
         }
-
         // field types styles
         .field-types-container {
-          width: 20%;
           background-color: $field-type-background;
           float: left;
           height: 75vh;
@@ -707,25 +692,15 @@ export default {
           p {
             text-align: center;
             font-size: 18px;
-            margin-top: 15%;
+            margin-top: 20%;
           }
         }
         // edit inputs container styles
         .inputs-container {
-          width: 50%;
-          padding: 2%;
-          float: left;
+          padding-top: 20px;
           // please select a type text
           input {
             width: 90%;
-          }
-          .left-input {
-            width: 50%;
-            float: left;
-          }
-          .right-input {
-            width: 50%;
-            float: right;
           }
           h2 {
             font-size: 20px;
@@ -743,52 +718,110 @@ export default {
             margin-top: 5px;
           }
         }
-        .tags-container {
-          float: left;
-          width: 100%;
-          h3 {
-            margin: 20px 0 15px 0;
+      }
+
+      // tag styles
+      .tag-row {
+        h3 {
+          margin: 0 0 15px 0;
+        }
+        h4 {
+          margin: 10px 0;
+        }
+        // tag group buttons
+        button {
+          background: $tag-background;
+          color: $secondary-font-color;
+          border: 2px solid $tag-border-color;
+          border-radius: 5px;
+          font-family: 'Proxima Nova', sans-serif;
+          font-weight: bold;
+          font-size: 12px;
+          padding: 8px 15px;
+          margin: 0 5px;
+          &:focus {
+            outline: none;
           }
-          .tag-left {
-            width: 50%;
-            float: left;
-          }
-          .tag-right {
-            width: 50%;
-            float: right;
-            ul {
-              margin: 0;
-              padding: 0;
-              list-style: none;
-              li {
-                font-size: 12px;
-                font-weight: bold;
-                color: $secondary-font-color;
-              }
-            }
-          }
-          button {
-            background: $tag-background;
-            color: $secondary-font-color;
-            border: 2px solid $tag-border-color;
-            border-radius: 5px;
-            font-family: 'Proxima Nova', sans-serif;
-            font-weight: bold;
+        }
+        button.active {
+          color: $white;
+          background-color: $selected-type-background;
+          border-color: $selected-type-background;
+        }
+        // tag ul styles
+        ul {
+          margin: 0;
+          padding: 0;
+          list-style: none;
+          li {
             font-size: 12px;
-            padding: 10px 15px;
-            margin: 0 5px;
-            &:focus {
-              outline: none;
-            }
-          }
-          button.active {
-            color: $white;
-            background-color: $selected-type-background;
-            border-color: $selected-type-background;
+            line-height: 1.5;
+            font-weight: bold;
+            color: $secondary-font-color;
           }
         }
       }
+
+
+      // field groups styles
+      .field-groups {
+        background: $field-groups-background;
+        border: 2px solid $tag-border-color;
+        border-radius: 5px;
+        width: 80%;
+        padding: 5%;
+        margin-top: 20px;
+        min-height: 430px;
+        position: relative;
+        input {
+          width: 98%;
+          padding-left: 5px;
+          font-family: 'Proxima Nova', sans-serif;
+        }
+        ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          li {
+            font-size: 14px;
+            font-weight: bold;
+            color: $main-font-color;
+            background: $white;
+            border: 2px solid $tag-border-color;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 15px 0;
+          }
+        }
+        button {
+          border: 2px solid $li-border-color;
+          background: $white;
+          height: 35px;
+          border-radius: 3px;
+          font-family: 'Proxima Nova', sans-serif;
+          font-weight: bold;
+          font-size: 12px;
+        }
+        .add-field-group {
+          width: 90%;
+          position: absolute;
+          bottom: 10px;
+        }
+        .save-cancel-container {
+          display: block;
+          position: absolute;
+          width: 100%;
+          bottom: 10px;
+          button {
+            width: 45%;
+          }
+        }
+      }
+
+
     }
   }
+
+
 
 </style>
