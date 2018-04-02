@@ -35,12 +35,12 @@
             </div>
           </div>
        </div>
+       <div class="placeholder-text" v-if="!newField.type">
+         <p>First, please select a type.</p>
+       </div>
        <!-- container for inputs -->
        <div class="inputs-container">
          <!-- before the user selects a type, this div is displayed -->
-         <div class="placeholder-text" v-if="!newField.type">
-           <p>First, please select a type.</p>
-         </div>
 
          <!-- inputs displayed only once type is selected -->
          <div v-if="newField.type">
@@ -67,36 +67,83 @@
 
         <div class="tags-container">
            <h3>Tags</h3>
-           <h4>Tag Groups</h4>
              <!-- tags, conditionally rendered by input type -->
              <div v-if="newField.type == 'Date'">
-               <button v-for="(tags, group) in dateTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+               <div class="tag-left">
+                  <h4>Tag Groups</h4>
+                  <button v-for="(tags, group) in dateTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <div class="tag-right">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
              </div>
 
              <div v-if="newField.type == 'Number'">
-               <button v-for="(tags, group) in numberTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+               <div class="tag-left">
+                  <h4>Tag Groups</h4>
+                  <button v-for="(tags, group) in numberTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <div class="tag-right">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
              </div>
 
              <div v-if="newField.type == 'Currency'">
-               <button v-for="(tags, group) in currencyTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+               <div class="tag-left">
+                  <h4>Tag Groups</h4>
+                  <button v-for="(tags, group) in currencyTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <div class="tag-right">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
              </div>
 
              <div v-if="newField.type == 'Text'">
-               <button v-for="(tags, group) in textTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+               <div class="tag-left">
+                  <h4>Tag Groups</h4>
+                  <button v-for="(tags, group) in textTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <div class="tag-right">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
              </div>
 
              <div v-if="newField.type == 'Select'">
-               <button v-for="(tags, group) in selectTagGroups" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
-               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+               <div class="tag-left">
+                  <h4>Tag Groups</h4>
+                  <button v-for="(tags, group) in selectTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <div class="tag-right">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
              </div>
 
              <div v-if="newField.type == 'VIN'">
-               <button v-for="(tags, group) in vinTagGroups" @click="toggleTagsInGroup(tags, group)" :class="{ active: isActive }">{{ group }}</button>
-               <p v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</p>
+               <div class="tag-left">
+                  <h4>Tag Groups</h4>
+                  <button v-for="(tags, group) in vinTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
+               </div>
+               <div class="tag-right">
+                 <h4>Tags</h4>
+                 <ul>
+                   <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
+                 </ul>
+               </div>
              </div>
              <!-- end of tags -->
             </div>
@@ -204,6 +251,7 @@ export default {
       //   'select',
       //   'vin'
       // ],
+      selectedTags: [],
       types: [
         {
           type: 'Text',
@@ -372,6 +420,7 @@ export default {
           fieldGroups: {}
         }
         this.selectedType = type.type;
+        this.selectedTags = [];
       },
       // Generates reference name on blur from display label input by removing spaces
       generateRefName () {
@@ -403,11 +452,15 @@ export default {
       toggleTagsInGroup (tags, group) {
         var name = group;
 
+        this.selectedTags.includes(group) ? this.selectedTags.splice(this.selectedTags.indexOf(group), 1) : this.selectedTags.push(group)
+
         if (this.newField.tags[name]) {
           Vue.delete(this.newField.tags, [name]);
+          this.tagIsActive = false;
         } else {
           this.newField.tags = Object.assign({}, this.newField.tags);
           this.newField.tags[name] = tags;
+          this.tagIsActive = true;
         }
       },
       // Resets newField's values back to null
@@ -584,6 +637,7 @@ export default {
         border-radius: 5px;
         background: $white;
         height: 75vh;
+        min-height: 510px;
         input {
           border: 2px solid $input-border-color;
           border-radius: 5px;
@@ -596,6 +650,7 @@ export default {
           background-color: $field-type-background;
           float: left;
           height: 75vh;
+          min-height: 510px;
           overflow-y: scroll;
           .field-types-inner {
             padding: 20px 25px 20px 20px;
@@ -648,6 +703,13 @@ export default {
             }
           }
         }
+        .placeholder-text {
+          p {
+            text-align: center;
+            font-size: 18px;
+            margin-top: 15%;
+          }
+        }
         // edit inputs container styles
         .inputs-container {
           width: 50%;
@@ -664,13 +726,6 @@ export default {
           .right-input {
             width: 50%;
             float: right;
-          }
-          .placeholder-text {
-            p {
-              text-align: center;
-              font-size: 18px;
-              margin-top: 20%;
-            }
           }
           h2 {
             font-size: 20px;
@@ -693,6 +748,24 @@ export default {
           width: 100%;
           h3 {
             margin: 20px 0 15px 0;
+          }
+          .tag-left {
+            width: 50%;
+            float: left;
+          }
+          .tag-right {
+            width: 50%;
+            float: right;
+            ul {
+              margin: 0;
+              padding: 0;
+              list-style: none;
+              li {
+                font-size: 12px;
+                font-weight: bold;
+                color: $secondary-font-color;
+              }
+            }
           }
           button {
             background: $tag-background;
