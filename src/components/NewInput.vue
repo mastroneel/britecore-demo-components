@@ -4,6 +4,10 @@
      <h1>Commercial Property - Add Field</h1>
      <div class="inner">
 
+
+
+
+
        <div class="row">
          <div class="col-xs-12 col-sm-4 col-md-3">
            <!-- container for field types section -->
@@ -70,7 +74,7 @@
              </div>
              <div class="row tag-row">
                <!-- tag groups -->
-               <div class="col-xs-12 col-sm-6">
+               <div class="col-xs-6">
                  <h4>Tag Groups</h4>
                  <button v-if="newField.type == 'Date'" v-for="(tags, group) in dateTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
                  <button v-if="newField.type == 'Number'" v-for="(tags, group) in numberTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
@@ -80,7 +84,7 @@
                  <button v-if="newField.type == 'VIN'" v-for="(tags, group) in vinTagGroups" :class="{active:selectedTags.includes(group)}" @click="toggleTagsInGroup(tags, group)">{{ group }}</button>
                </div>
                <!-- tags from tag groups -->
-               <div class="col-xs-12 col-sm-6">
+               <div class="col-xs-6">
                  <h4>Tags</h4>
                  <ul>
                    <li v-for="(tag, group) in newField.tags">{{ tag.join(" ") }}</li>
@@ -90,13 +94,14 @@
            </div>
            <!-- field groups -->
            <div class="col-xs-12 col-sm-4 col-md-3" v-if="newField.type">
-             <div class="field-groups">
+             <div class="field-groups field-groups-desktop">
                <h3>Field Groups</h3>
+
                <p>Choose a group for this input</p>
 
                <!-- field groups -->
                <ul>
-                 <li v-for="group in fieldGroups" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
+                 <li v-for="group in fieldGroups" :class="{active:selectedFieldGroups.includes(group)}" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
                </ul>
 
                <input type="text" v-if="showNewFieldGroup" v-model="newFieldGroup.title" placeholder="Enter name of new field group...">
@@ -104,7 +109,7 @@
                <button class="add-field-group" v-if="!showNewFieldGroup" @click="showNewFieldGroupInput()">Add a New Group</button>
 
                <div v-if="showNewFieldGroup" class="save-cancel-container">
-                 <button @click="saveNewFieldGroup">Save New Group</button>
+                 <button class="save-button" @click="saveNewFieldGroup">Save New Group</button>
                  <button @click="cancelNewFieldGroup()">Cancel</button>
                </div>
              </div>
@@ -238,6 +243,7 @@ export default {
       //   'vin'
       // ],
       selectedTags: [],
+      selectedFieldGroups: [],
       types: [
         {
           type: 'Text',
@@ -407,6 +413,7 @@ export default {
         }
         this.selectedType = type.type;
         this.selectedTags = [];
+        this.selectedFieldGroups = [];
       },
       // Generates reference name on blur from display label input by removing spaces
       generateRefName () {
@@ -438,7 +445,7 @@ export default {
       toggleTagsInGroup (tags, group) {
         var name = group;
 
-        this.selectedTags.includes(group) ? this.selectedTags.splice(this.selectedTags.indexOf(group), 1) : this.selectedTags.push(group)
+        this.selectedTags.includes(group) ? this.selectedTags.splice(this.selectedTags.indexOf(group), 1) : this.selectedTags.push(group);
 
         if (this.newField.tags[name]) {
           Vue.delete(this.newField.tags, [name]);
@@ -501,6 +508,8 @@ export default {
       // Toggles adding input to field group
       toggleAddToFieldGroup (group) {
         var name = group.title.replace(/\s/g,'');
+
+        this.selectedFieldGroups.includes(group) ? this.selectedFieldGroups.splice(this.selectedFieldGroups.indexOf(group), 1) : this.selectedFieldGroups.push(group)
 
         if (this.newField.fieldGroups[name]) {
           Vue.delete(this.newField.fieldGroups, [name]);
@@ -738,14 +747,14 @@ export default {
           font-weight: bold;
           font-size: 12px;
           padding: 8px 15px;
-          margin: 0 5px;
+          margin: 3px 5px;
           &:focus {
             outline: none;
           }
         }
         button.active {
-          color: $white;
-          background-color: $selected-type-background;
+          color: $tag-background;
+          background-color: $secondary-font-color;
           border-color: $selected-type-background;
         }
         // tag ul styles
@@ -780,17 +789,23 @@ export default {
         }
         ul {
           list-style-type: none;
-          margin: 0;
+          margin: 0 0 15px 0;
           padding: 0;
+          height: 250px;
+          overflow-x: scroll;
           li {
-            font-size: 14px;
+            font-size: 13px;
             font-weight: bold;
             color: $main-font-color;
             background: $white;
             border: 2px solid $tag-border-color;
             border-radius: 5px;
-            padding: 15px;
+            padding: 10px 15px;
             margin: 15px 0;
+          }
+          li.active {
+            color: $white;
+            background: $secondary-font-color;
           }
         }
         button {
@@ -815,12 +830,73 @@ export default {
           button {
             width: 45%;
           }
+          .save-button {
+            color: $white;
+            background-color: $selected-type-background;
+            border-color: $selected-type-background;
+          }
         }
       }
-
-
     }
   }
+
+  // *************
+  // Media queries
+  // *************
+
+  @media (max-width: 1090px) {
+    .outer-frame {
+      padding: 0 !important;
+      h1 {
+        display: none;
+      }
+      .save-button {
+        margin-left: 20px;
+      }
+      .delete-button {
+        margin-right: 20px;
+      }
+      .inner {
+        border: none !important;
+        border-bottom: 2px solid $input-border-color !important;
+      }
+    }
+  }
+
+  @media (max-width: 1023px) {
+    .outer-frame {
+      .inner {
+        .field-groups {
+          display: none;
+        }
+      }
+    }
+  }
+
+  @media (max-width: 767px) {
+    .outer-frame {
+      .inner {
+        .field-types-container {
+          display: none;
+        }
+        .inputs-container {
+          margin-left: 20px;
+          .margin {
+            margin-top: 20px !important;
+          }
+        }
+      }
+    }
+  }
+
+
+
+
+
+
+
+
+
 
 
 

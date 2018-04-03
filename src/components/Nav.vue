@@ -69,4 +69,16 @@ $selected-nav-background: #29606a;
   }
 }
 
+// *************
+// Media queries
+// *************
+
+@media (max-width: 865px) {
+  #Nav {
+    ul {
+      display: none;
+    }
+  }
+}
+
 </style>
