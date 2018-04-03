@@ -838,6 +838,92 @@ export default {
   // Media queries
   // *************
 
+  @media (min-width: 1500px) and (min-height: 1000px) {
+    .outer-frame {
+      .inner {
+        .field-types-container {
+          width: 90%;
+        }
+        .inputs-container {
+           input {
+             height: 40px !important;
+           }
+           h2 {
+             font-size: 30px !important;
+             margin-top: 20px !important;
+           }
+           h3 {
+             font-size: 30px !important;
+             margin-top: 30px !important;
+           }
+           h4 {
+             font-size: 25px !important;
+             margin: 10px 0 !important;
+           }
+           p {
+             font-size: 16px !important;
+           }
+           .margin {
+             margin-top: 50px !important;
+           }
+           .tag-row {
+             button {
+               font-size: 16px !important;
+             }
+             ul {
+               li {
+                 font-size: 16px !important;
+               }
+             }
+           }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 1900px) and (min-height: 1100px) {
+    .outer-frame {
+      .inner {
+        .field-types-container {
+          width: 90%;
+        }
+        .inputs-container {
+           input {
+             height: 45px !important;
+           }
+           h2 {
+             font-size: 32px !important;
+             margin-top: 20px !important;
+           }
+           h3 {
+             font-size: 32px !important;
+             margin-top: 30px !important;
+           }
+           h4 {
+             font-size: 28px !important;
+             margin: 10px 0 !important;
+           }
+           p {
+             font-size: 18px !important;
+           }
+           .margin {
+             margin-top: 50px !important;
+           }
+           .tag-row {
+             button {
+               font-size: 18px !important;
+             }
+             ul {
+               li {
+                 font-size: 18px !important;
+               }
+             }
+           }
+        }
+      }
+    }
+  }
+
   @media (max-width: 1090px) {
     .outer-frame {
       padding: 0 !important;
