@@ -4,12 +4,40 @@
      <h1>Commercial Property - Add Field</h1>
      <div class="inner">
 
+       <nav class="site-navbar" v-if="newField.type">
+         <input type="checkbox" id="toggle_menu" class="toggle-menu-checkbox" />
+         <label for="toggle_menu" class="toggle-menu-label uppercase" id="toggle_menu">Show Field Groups</label>
+         <input type="checkbox" id="toggle_overlay" class="toggle-overlay-checkbox" />
+         <label for="toggle_menu" class="toggle-overlay-label uppercase"></label>
+         <div class="site-menu">
+           <div class="col-xs-12">
+             <div class="field-groups field-groups-mobile">
+               <h3>Field Groups</h3>
+
+               <p>Choose a group for this input</p>
+
+               <!-- field groups -->
+               <ul>
+                 <li v-for="group in fieldGroups" :class="{active:selectedFieldGroups.includes(group)}" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
+               </ul>
+
+               <input type="text" v-if="showNewFieldGroup" v-model="newFieldGroup.title" placeholder="Enter name of new field group...">
+
+               <button class="add-field-group" v-if="!showNewFieldGroup" @click="showNewFieldGroupInput()">Add a New Group</button>
+
+               <div v-if="showNewFieldGroup" class="save-cancel-container">
+                 <button class="save-button" @click="saveNewFieldGroup">Save New Group</button>
+                 <button @click="cancelNewFieldGroup()">Cancel</button>
+               </div>
+             </div>
+           </div>
+         </div>
+       </nav>
 
 
-
-
-       <div class="row">
-         <div class="col-xs-12 col-sm-4 col-md-3">
+      <!-- desktop field types -->
+       <div class="row field-types-desktop">
+         <div class="col-xs-5 col-sm-4 col-md-3">
            <!-- container for field types section -->
            <div class="field-types-container">
              <div class="field-types-inner">
@@ -44,11 +72,12 @@
            </div>
          </div>
          <!-- before the user selects a type, this div is displayed -->
-         <div class="placeholder-text col-xs-12 col-sm-8 col-md-9" v-if="!newField.type">
+         <div class="placeholder-text col-xs-6 col-sm-8 col-md-9" v-if="!newField.type">
            <p>First, please select a type.</p>
          </div>
          <!-- inputs displayed only once type is selected -->
-           <div class="col-xs-12 col-sm-8 col-md-6 inputs-container" v-if="newField.type">
+           <div class="col-xs-6 col-sm-8 col-md-6 inputs-container" v-if="newField.type">
+
              <h2>Field Details</h2>
              <div class="row">
                <div class="col-xs-12 col-sm-6">
@@ -93,7 +122,7 @@
              </div>
            </div>
            <!-- field groups -->
-           <div class="col-xs-12 col-sm-4 col-md-3" v-if="newField.type">
+           <div class="col-sm-4 col-md-3" v-if="newField.type">
              <div class="field-groups field-groups-desktop">
                <h3>Field Groups</h3>
 
@@ -120,35 +149,6 @@
 
 
 
-       <!-- container for inputs -->
-       <div class="inputs-container">
-
-
-
-         <div v-if="newField.type">
-
-           <!-- {{ newField }} -->
-
-
-           <div class="col">
-
-           </div>
-
-           <div class="col">
-
-           </div>
-
-             <!-- field groups -->
-             <div class="field-groups-container col">
-
-             </div>
-
-
-           <!-- tags, conditionally rendered by input type -->
-           <div class="tags-container">
-
-                <!-- end of tags -->
-               </div>
 
 
 
@@ -159,12 +159,6 @@
 
 
 
-
-
-
-
-         </div>
-       </div>
 
 
      <!-- saved fields -->
@@ -633,7 +627,7 @@ export default {
         border-radius: 5px;
         background: $white;
         height: 75vh;
-        min-height: 510px;
+        min-height: 540px;
         input {
           border: 2px solid $input-border-color;
           border-radius: 5px;
@@ -644,7 +638,7 @@ export default {
           background-color: $field-type-background;
           float: left;
           height: 75vh;
-          min-height: 510px;
+          min-height: 540px;
           overflow-y: scroll;
           .field-types-inner {
             padding: 20px 25px 20px 20px;
@@ -863,10 +857,45 @@ export default {
     }
   }
 
+  @media (min-width: 1024px) {
+    .outer-frame {
+      .site-navbar {
+        display: none;
+      }
+      .inner {
+        .field-groups-mobile {
+          display: none;
+        }
+      }
+    }
+  }
+
   @media (max-width: 1023px) {
     .outer-frame {
       .inner {
-        .field-groups {
+        .field-groups-desktop {
+          display: none;
+        }
+        .field-groups-mobile {
+          display: block;
+          .save-cancel-container {
+            button {
+              width: 38% !important;
+              font-size: 10px !important;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  @media (min-width: 768px) {
+    .outer-frame {
+      .inner {
+        .field-types-mobile {
+          display: none;
+        }
+        .placeholder-text {
           display: none;
         }
       }
@@ -875,9 +904,14 @@ export default {
 
   @media (max-width: 767px) {
     .outer-frame {
+      button {
+        padding: 5px !important;
+        font-size: 10px !important;
+      }
       .inner {
+        min-height: 630px !important;
         .field-types-container {
-          display: none;
+          min-height: 630px !important;
         }
         .inputs-container {
           margin-left: 20px;
@@ -888,6 +922,199 @@ export default {
       }
     }
   }
+
+  @media (max-width: 515px) {
+    .outer-frame {
+      .inner {
+        min-height: 690px !important;
+        .field-types-container {
+          min-height: 690px !important;
+          .field-types-inner {
+            padding: 10px !important;
+            ul {
+              li {
+                i {
+                  font-size: 10px;
+                }
+                h2 {
+                  font-size: 14px !important;
+                }
+                h3 {
+                  font-size: 12px !important;
+                }
+                p {
+                  font-size: 10px !important;
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  //
+  // @media (max-width: 470px) {
+  //   .outer-frame {
+  //     .inner {
+  //       .field-types-desktop {
+  //         .field-types-container {
+  //           .field-types-inner {
+  //             padding: 10px !important;
+  //           }
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
+
+
+
+  // ******************************
+  // Mobile field group menu styles
+  // ******************************
+
+  // mobile menu variables
+  $toggle-stripe-2: 10px;
+  $toggle-stripe-3: 20px;
+
+  $navbar-background: $field-type-background;;
+  $navbar-color: $secondary-font-color;
+
+  $transition: .2s ease-in-out;
+
+  $menu-width: 300px;
+  $menu-shadow: 4px 0 16px -4px rgba(0, 0, 0, .2);
+
+  %transition {
+   -webkit-transition: $transition;
+      -moz-transition: $transition;
+           transition: $transition;
+  }
+
+  // field group mobile menu styles
+  .site-navbar {
+    font-size: 14px;
+    height: 60px;
+    left: 20px;
+    position: fixed;
+    right: 20px;
+    top: 20px;
+    float: right;
+    z-index: 11;
+    label {
+      padding-left: 45px;
+      padding-top: 4px;
+      font-size: 16px;
+      color: $secondary-font-color;
+    }
+  }
+
+  // menu styles
+  .site-menu {
+    @extend %transition;
+    background: $field-type-background;
+    bottom: 0;
+    font-size: 14px;
+    height: 100%;
+    left: -$menu-width;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    padding-top: 40px;
+    position: fixed;
+    top: 0;
+    width: $menu-width;
+  }
+
+  // hides default checkbox input
+  .toggle-overlay-checkbox {
+    display: none;
+  }
+
+  // page overlay styles
+  .toggle-overlay-label {
+    @extend %transition;
+    bottom: 0;
+    left: 0;
+    opacity: 0;
+    pointer-events: none;
+    position: fixed;
+    right: 0;
+    top: 0;
+    z-index: -1;
+  }
+  .toggle-menu-checkbox:checked ~ .toggle-overlay-label {
+    background: rgba(0, 0, 0, .5);
+    opacity: 1;
+    pointer-events: auto;
+    z-index: 1;
+  }
+
+  // menu toggle
+  .toggle-menu-checkbox,
+  .toggle-menu-label {
+    display: none;
+  }
+  .toggle-menu-checkbox:checked ~ .site-menu {
+    left: 0;
+    z-index: 2;
+            box-shadow: $menu-shadow;
+       -moz-box-shadow: $menu-shadow;
+    -webkit-box-shadow: $menu-shadow;
+  }
+  .toggle-overlay-checkbox:checked ~ .site-menu {
+    left: -$menu-width;
+  }
+  .toggle-menu-label {
+    cursor: pointer;
+    display: block;
+    padding: 0 0 0 20px;
+    position: absolute;
+    left: 0px;
+    top: 0px;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    &:before {
+      background: $navbar-color;
+      content: "";
+      height: 4px;
+      position: absolute;
+      left: 0;
+      top: 1px;
+      width: 2.2em;
+      box-shadow: 0 $toggle-stripe-2 0 0 $navbar-color, 0 $toggle-stripe-3 0 0 $navbar-color;
+      -moz-box-shadow: 0 $toggle-stripe-2 0 0 $navbar-color, 0 $toggle-stripe-3 0 0 $navbar-color;
+      -webkit-box-shadow: 0 $toggle-stripe-2 0 0 $navbar-color, 0 $toggle-stripe-3 0 0 $navbar-color;
+
+    }
+    &:after {
+      color: $navbar-color;
+      content: "";
+      display: inline-block;
+      line-height: 1;
+      margin-top: -9px;
+      padding-right: 1.4em;
+      text-align: center;
+      text-transform: uppercase;
+      vertical-align: middle;
+      border-radius: 2px 2px 2px 2px;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

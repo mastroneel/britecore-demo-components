@@ -73,8 +73,9 @@ $selected-nav-background: #29606a;
 // Media queries
 // *************
 
-@media (max-width: 865px) {
+@media (max-width: 1023px) {
   #Nav {
+    visibility: hidden;
     ul {
       display: none;
     }
