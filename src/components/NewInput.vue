@@ -13,9 +13,7 @@
            <div class="col-xs-12">
              <div class="field-groups field-groups-mobile">
                <h3>Field Groups</h3>
-
                <p>Choose a group for this input</p>
-
                <!-- field groups -->
                <ul>
                  <li v-for="group in fieldGroups" :class="{active:selectedFieldGroups.includes(group)}" @click="toggleAddToFieldGroup(group)">{{ group.title }}</li>
@@ -33,7 +31,6 @@
            </div>
          </div>
        </nav>
-
 
       <!-- field types -->
        <div class="row">
@@ -143,10 +140,8 @@
                </div>
              </div>
            </div>
-
        </div>
        <!-- end row -->
-
    </div>
    <!-- end inner -->
 
@@ -156,7 +151,6 @@
      <button class="delete-button" @click="deleteNew">Delete Input</button>
      <button class="cancel-button" @click="cancelChanges">Cancel Changes</button>
    </div>
-
 
    </div>
    <!-- end outer -->

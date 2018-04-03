@@ -70,11 +70,6 @@ module.exports = {
         }
       }
     ],
-    vue: {
-    loaders: {
-      scss: 'style!css!sass'
-    }
-  }
   },
   node: {
     // prevent webpack from injecting useless setImmediate polyfill because Vue
