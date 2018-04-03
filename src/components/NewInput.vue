@@ -35,8 +35,8 @@
        </nav>
 
 
-      <!-- desktop field types -->
-       <div class="row field-types-desktop">
+      <!-- field types -->
+       <div class="row">
          <div class="col-xs-5 col-sm-4 col-md-3">
            <!-- container for field types section -->
            <div class="field-types-container">
@@ -147,77 +147,21 @@
        </div>
        <!-- end row -->
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-     <!-- saved fields -->
-     <!-- <p class="red">Saved Fields</p>
-     {{ savedFields }}
-
-     <br>
-     <br> -->
-
-     <!-- new field, yet to be saved -->
-     <!-- <p>Unsaved Fields</p>
-     {{ newField }}
-     <br>
-     <br> -->
-
-     <!-- first, the user must select a type -->
-
-     <!-- input to search input types -->
-
-
-
-
-
-
-
-     <br>
-     <br>
-     <br>
-
-
-     <!-- <p>Field Groups:</p> -->
-     <!-- field groups -->
-     <!-- {{ fieldGroups }} -->
-
-     <br>
-     <br>
-     <br>
-
-     <!-- <p>New Field Group</p> -->
-     <!-- {{ newFieldGroup }} -->
-
-
-
    </div>
+   <!-- end inner -->
 
    <!-- save, cancel, delete buttons in the outer container -->
    <div v-if="newField.type" class="button-container">
      <button class="save-button" @click="saveNew">Save Changes</button>
-
      <button class="delete-button" @click="deleteNew">Delete Input</button>
-
      <button class="cancel-button" @click="cancelChanges">Cancel Changes</button>
-
    </div>
 
 
-
    </div>
+   <!-- end outer -->
  </div>
+ <!-- end new input -->
 </template>
 
 <script>
@@ -227,15 +171,6 @@ export default {
   name: 'NewInput',
   data () {
     return {
-      // different input types
-      // types: [
-      //   'date',
-      //   'number',
-      //   'currency',
-      //   'text',
-      //   'select',
-      //   'vin'
-      // ],
       selectedTags: [],
       selectedFieldGroups: [],
       types: [
@@ -273,9 +208,6 @@ export default {
       selectedType: undefined,
       // Empty search input
       searchText: '',
-      // Tag is selected?
-
-
       // example tag groups for each input type
       dateTagGroups: {
         dateTag1: [
@@ -391,8 +323,6 @@ export default {
       showNewFieldGroup: false
     }
   },
-
-
     methods: {
       // When the user selects a type, the value for 'type' is set to the selected type
       selectType (type) {
@@ -583,12 +513,11 @@ export default {
     // Outer frame styles
     .outer-frame {
       background: $outer-frame-background;
-      padding: 20px 40px;
+      padding: 20px 40px 60px 40px;
       h1 {
         font-size: 30px;
         margin-bottom: 20px;
       }
-
       // save, cancel, delete button styles
       .button-container {
         margin: 20px 0;
@@ -620,7 +549,6 @@ export default {
           color: $white;
         }
       }
-
       // Inner container styles
       .inner {
         border: 2px solid $input-border-color;
@@ -722,7 +650,6 @@ export default {
           }
         }
       }
-
       // tag styles
       .tag-row {
         h3 {
@@ -764,8 +691,6 @@ export default {
           }
         }
       }
-
-
       // field groups styles
       .field-groups {
         background: $field-groups-background;
@@ -833,11 +758,13 @@ export default {
       }
     }
   }
+  // end main styles
 
   // *************
   // Media queries
   // *************
 
+  // large screen styles
   @media (min-width: 1500px) and (min-height: 1000px) {
     .outer-frame {
       .inner {
@@ -881,6 +808,7 @@ export default {
     }
   }
 
+  // large screen styles
   @media (min-width: 1900px) and (min-height: 1100px) {
     .outer-frame {
       .inner {
@@ -924,6 +852,7 @@ export default {
     }
   }
 
+  // remove outer frame
   @media (max-width: 1090px) {
     .outer-frame {
       padding: 0 !important;
@@ -943,6 +872,7 @@ export default {
     }
   }
 
+  // Hide navbar, hide mobile field groups for larger screens
   @media (min-width: 1024px) {
     .outer-frame {
       .site-navbar {
@@ -956,6 +886,7 @@ export default {
     }
   }
 
+  // display mobile field groups for smaller screens, change button sizes
   @media (max-width: 1023px) {
     .outer-frame {
       .inner {
@@ -975,19 +906,7 @@ export default {
     }
   }
 
-  @media (min-width: 768px) {
-    .outer-frame {
-      .inner {
-        .field-types-mobile {
-          display: none;
-        }
-        .placeholder-text {
-          display: none;
-        }
-      }
-    }
-  }
-
+  // styles for smaller screens
   @media (max-width: 767px) {
     .outer-frame {
       button {
@@ -1009,6 +928,7 @@ export default {
     }
   }
 
+  // styles for smaller screens
   @media (max-width: 515px) {
     .outer-frame {
       .inner {
@@ -1038,22 +958,6 @@ export default {
       }
     }
   }
-  //
-  // @media (max-width: 470px) {
-  //   .outer-frame {
-  //     .inner {
-  //       .field-types-desktop {
-  //         .field-types-container {
-  //           .field-types-inner {
-  //             padding: 10px !important;
-  //           }
-  //         }
-  //       }
-  //     }
-  //   }
-  // }
-
-
 
   // ******************************
   // Mobile field group menu styles
@@ -1082,11 +986,11 @@ export default {
     font-size: 14px;
     height: 60px;
     left: 20px;
-    position: fixed;
+    position: absolute;
     right: 20px;
     top: 20px;
     float: right;
-    z-index: 11;
+    z-index: 100;
     label {
       padding-left: 45px;
       padding-top: 4px;
@@ -1136,7 +1040,7 @@ export default {
     z-index: 1;
   }
 
-  // menu toggle
+  // menu styles
   .toggle-menu-checkbox,
   .toggle-menu-label {
     display: none;
@@ -1187,30 +1091,5 @@ export default {
       border-radius: 2px 2px 2px 2px;
     }
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 </style>

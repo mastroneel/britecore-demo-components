@@ -76,6 +76,7 @@ $selected-nav-background: #29606a;
 @media (max-width: 1023px) {
   #Nav {
     visibility: hidden;
+    height: 60px;
     ul {
       display: none;
     }
